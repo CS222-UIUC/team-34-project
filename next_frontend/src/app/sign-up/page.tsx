@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { signup } from "@/lib/auth";
 import Link from "next/link";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
