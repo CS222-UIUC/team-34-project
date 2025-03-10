@@ -53,33 +53,22 @@ class User(db.Model):
     def __init__(self, email, password, username):
 
         self.username = username
-
         self.email = email
-
         self.password = password
-
         self.reset_token = None
-
         self.reset_token_expiration = None
-
         self.is_editor = False
-
         self.is_admin = False
-
         self.stripe_customer_id = None  
-
         self.subscription_status = "Free" 
-
         self.email_list = True  
 
     def get_id(self):
-
         return str(self.id)
 
  
 
     def check_password(self, password):
-
         return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
 
  
@@ -87,29 +76,22 @@ class User(db.Model):
     @staticmethod
 
     def get(user_id):
-
         return User.query.get(int(user_id))
 
  
 
     def generate_reset_token(self):
-
                 self.reset_token = secrets.token_urlsafe(10)
-
                 self.reset_token_expiration = datetime.now() + timedelta(minutes=30)
-
                 db.session.commit()
-
                 return self.reset_token
 
  
 
     def check_reset_token_validity(self):
-
-                return self.reset_token_expiration > datetime.now()
+            return self.reset_token_expiration > datetime.now()
 
 
     def check_password(self, password):
-
-                return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
+            return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
                 
