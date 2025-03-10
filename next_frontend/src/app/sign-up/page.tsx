@@ -22,7 +22,7 @@ const SignUpClient = () => {
     };
 
     return (
-        <GoogleOAuthProvider clientId="462492634822-4b1hk554m81f29absrgt44mq9ijsnh8h.apps.googleusercontent.com">
+        <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
             <div className="flex justify-center items-center min-h-screen bg-gray-50">
                 <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
                     <h1 className="text-3xl font-bold text-center mb-6">Sign Up</h1>
