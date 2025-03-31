@@ -5,10 +5,9 @@ import random
 import string
 from config import send_email
 
-# Create a Blueprint for authentication-related routes
 auth_bp = Blueprint('auth', __name__)
 
-# User registration route
+
 @auth_bp.route("/register", methods=["POST"])
 def register_user():
     """Register a new user."""
@@ -20,10 +19,11 @@ def register_user():
     if not email or not password or not username:
         return jsonify({"error": "Username, email, and password are required"}), 400
 
-    # Check if email already exists
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
-        return jsonify({"error": "Email already associated with an account. Please use a different email."}), 400
+        return jsonify({
+            "error": "Email already associated with an account. Please use a different email."
+        }), 400
 
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
@@ -52,6 +52,7 @@ def register_user():
         }
     }), 201
 
+
 @auth_bp.route("/login", methods=["POST"])
 def login_user():
     """Log in an existing user."""
@@ -75,6 +76,7 @@ def login_user():
         }
     })
 
+
 @auth_bp.route("/login-google", methods=["POST"])
 def login_google():
     """Log in or register a user using Google OAuth."""
@@ -85,15 +87,15 @@ def login_google():
 
     if not existing_user:
         password_length = 12
-        random_password = ''.join(random.choices(string.ascii_letters + string.digits, k=password_length))
+        random_password = ''.join(
+            random.choices(string.ascii_letters + string.digits, k=password_length)
+        )
         hashed_password = bcrypt.hashpw(random_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
-        # Create and save the new user
         new_user = User(username=username, email=email, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
-        # Send a welcome email to the user
         subject = "Welcome to Fantasy Trading Room!"
         heading = "Welcome Aboard!"
         body = (
@@ -119,6 +121,7 @@ def login_google():
         }
     })
 
+
 @auth_bp.route('/forgot-pass', methods=['POST'])
 def forgotpass():
     """Send a password reset email to the user."""
@@ -135,15 +138,17 @@ def forgotpass():
         subject = "Password Reset"
         heading = "Reset Password"
         body = (
-            f"We received a request to reset your password. Please click the link below to reset your password:\n\n"
+            "We received a request to reset your password. Please click the link below to reset "
+            "your password:\n\n"
             f'<a href="{reset_link}">Reset your password</a>\n\n'
             "If you did not request a password reset, please ignore this email or contact our support team."
         )
         send_email(subject, email, heading, body)
 
         return jsonify({'message': 'Password reset email sent. Check your inbox.'}), 200
-    else:
-        return jsonify({'error': 'No user found with that email address.'}), 404
+
+    return jsonify({'error': 'No user found with that email address.'}), 404
+
 
 @auth_bp.route('/reset/<token>', methods=['POST'])
 def reset_password(token):
@@ -156,11 +161,13 @@ def reset_password(token):
         new_password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         user.password = new_password
-        user.reset_token = None  
+        user.reset_token = None
         user.reset_token_expiration = None
 
         db.session.commit()
 
-        return jsonify({'message': 'Password reset successful. You can now log in with your new password.'}), 200
-    else:
-        return jsonify({'error': 'Invalid or expired reset link.'}), 400
+        return jsonify({
+            'message': 'Password reset successful. You can now log in with your new password.'
+        }), 200
+
+    return jsonify({'error': 'Invalid or expired reset link.'}), 400
