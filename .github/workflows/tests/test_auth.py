@@ -54,7 +54,7 @@ def test_forgot_password(client, monkeypatch):
     })
     assert response.status_code == 200
     '''
-#import pytest
+import pytest
 
 def test_dummy_register():
     # This dummy test simulates a registration test.
