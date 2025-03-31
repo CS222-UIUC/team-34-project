@@ -1,15 +1,17 @@
 
-import pytest
 
 def test_dummy_login():
     response = {"status_code": 200, "user": {"email": "dummy@example.com"}}
     assert response["status_code"] == 200
     assert "user" in response
 
+
 def test_dummy_forgot_password():
-    response = {"status_code": 200, "message": "Dummy forgot password test passed"}
+    response = {"status_code": 200, "message":
+                "Dummy forgot password test passed"}
     assert response["status_code"] == 200
     assert "message" in response
+
 
 '''
 import pytest
@@ -19,9 +21,9 @@ import json
 
 @pytest.fixture
 def client():
-    app = create_app('testing')  
+    app = create_app('testing')
     app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
     with app.test_client() as client:
         with app.app_context():
             db.create_all()

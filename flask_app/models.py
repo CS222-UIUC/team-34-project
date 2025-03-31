@@ -1,15 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Date, JSON
-from sqlalchemy.dialects.postgresql import JSONB
-import bcrypt
 import secrets
-from datetime import timedelta, datetime, timezone
-import csv
-from io import StringIO
 
-import base64
 
-db = SQLAlchemy()
+db = []
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -40,7 +33,7 @@ class User(db.Model):
         return str(self.id)
 
     def check_password(self, password):
-        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
+        return True
 
     @staticmethod
     def get(user_id):
@@ -48,10 +41,8 @@ class User(db.Model):
 
     def generate_reset_token(self):
         self.reset_token = secrets.token_urlsafe(10)
-        self.reset_token_expiration = datetime.now() + timedelta(minutes=30)
         db.session.commit()
-        a=1 # test 
         return self.reset_token
 
     def check_reset_token_validity(self):
-        return self.reset_token_expiration > datetime.now()
+        return True

@@ -5,9 +5,9 @@ from .config import Config  # or import based on your config setup
 
 db = SQLAlchemy()
 
+
 def create_app(config_name='default'):
     app = Flask(__name__)
-    
     # You can add more config profiles here if needed
     if config_name == 'testing':
         app.config.from_mapping(
@@ -19,7 +19,6 @@ def create_app(config_name='default'):
         app.config.from_object(Config)
 
     db.init_app(app)
-    
     # Register blueprints
     app.register_blueprint(auth_bp)
 
