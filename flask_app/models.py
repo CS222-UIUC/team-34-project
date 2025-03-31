@@ -6,11 +6,8 @@ import secrets
 from datetime import timedelta, datetime, timezone
 import csv
 from io import StringIO
-<<<<<<< Updated upstream
-import base64  # Import base64 at the top of your file
-=======
+
 import base64
->>>>>>> Stashed changes
 
 db = SQLAlchemy()
 
@@ -53,11 +50,8 @@ class User(db.Model):
         self.reset_token = secrets.token_urlsafe(10)
         self.reset_token_expiration = datetime.now() + timedelta(minutes=30)
         db.session.commit()
+        a=1 # test 
         return self.reset_token
 
     def check_reset_token_validity(self):
-<<<<<<< Updated upstream
         return self.reset_token_expiration > datetime.now()
-=======
-        return self.reset_token_expiration > datetime.now()
->>>>>>> Stashed changes
