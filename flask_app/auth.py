@@ -93,7 +93,7 @@ def login_google():
         db.session.add(new_user)
         db.session.commit()
 
-        # Send a welcome email
+        # Send a welcome email to the user
         subject = "Welcome to Fantasy Trading Room!"
         heading = "Welcome Aboard!"
         body = (
