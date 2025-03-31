@@ -6,7 +6,8 @@ import secrets
 from datetime import timedelta, datetime, timezone
 import csv
 from io import StringIO
-import base64  # Import base64 at the top of your file
+
+import base64
 
 db = SQLAlchemy()
 
@@ -54,4 +55,3 @@ class User(db.Model):
 
     def check_reset_token_validity(self):
         return self.reset_token_expiration > datetime.now()
-    
