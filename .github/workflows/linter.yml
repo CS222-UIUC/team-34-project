@@ -2,9 +2,14 @@ name: Lint Code
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
+      - linter-fix
   pull_request:
-    branches: [ main ]
+    branches: 
+      - main
+      - linter-fix
+
 
 jobs:
   lint:
