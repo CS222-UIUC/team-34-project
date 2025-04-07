@@ -75,3 +75,14 @@ def test_forgot_password(client, monkeypatch):
     })
     assert response.status_code == 200
     assert "message" in response.get_json()
+def test_create_post(auth_client, category):
+    response = auth_client.post("/posts", json={
+        "title": "Test Post",
+        "content": "This is a test post.",
+        "category_id": category.id
+    })
+
+    assert response.status_code == 201
+    data = response.get_json()
+    assert data["title"] == "Test Post"
+    assert data["category"]["id"] == category.id
