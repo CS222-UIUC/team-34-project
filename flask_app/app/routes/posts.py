@@ -5,6 +5,7 @@ from app import db
 
 posts = Blueprint("posts", __name__)
 
+
 @posts.route("/posts", methods=["GET"])
 def get_posts():
     category_id = request.args.get("category_id", type=int)
@@ -16,17 +17,24 @@ def get_posts():
     posts = query.all()
     return jsonify([post.to_dict() for post in posts])
 
+
 @posts.route("/posts/<int:post_id>", methods=["GET"])
 def get_post(post_id):
     post = Post.query.get_or_404(post_id)
     return jsonify(post.to_dict())
+
 
 @posts.route("/posts", methods=["POST"])
 @login_required
 def create_post():
     data = request.get_json()
 
-    if not data or "title" not in data or "content" not in data or "category_id" not in data:
+    if (
+        not data
+        or "title" not in data
+        or "content" not in data
+        or "category_id" not in data
+    ):
         return jsonify({"error": "Missing required fields"}), 400
 
     category = Category.query.get(data["category_id"])
@@ -45,6 +53,7 @@ def create_post():
 
     return jsonify(post.to_dict()), 201
 
+
 @posts.route("/posts/<int:post_id>/replies", methods=["POST"])
 @login_required
 def create_reply(post_id):
@@ -55,9 +64,7 @@ def create_reply(post_id):
         return jsonify({"error": "Missing content"}), 400
 
     reply = Reply(
-        content=data["content"],
-        user_id=current_user.id,
-        post_id=post.id
+        content=data["content"], user_id=current_user.id, post_id=post.id
     )
 
     db.session.add(reply)
