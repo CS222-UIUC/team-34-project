@@ -17,10 +17,10 @@ export interface Post {
 export interface Reply {
   id: number;
   content: string;
-  created_at: string;
-  user_id: number;
-  username: string;
-  post_id: number;
+  timestamp: string;
+  author: {
+    username: string;
+  };
 }
 
 export interface CreatePostData {
