@@ -49,7 +49,7 @@ class Post(db.Model):
             "category_id": self.category_id,
             "author": self.author.to_dict() if self.author else None,
             "category": self.category.to_dict() if self.category else None,
-            "replies": [reply.to_dict() for reply in self.replies]
+            "replies": [reply.to_dict() for reply in self.replies],
         }
 
 
@@ -67,5 +67,5 @@ class Reply(db.Model):
             "timestamp": self.timestamp.isoformat(),
             "user_id": self.user_id,
             "post_id": self.post_id,
-            "author": self.author.to_dict() if self.author else None
+            "author": self.author.to_dict() if self.author else None,
         }
