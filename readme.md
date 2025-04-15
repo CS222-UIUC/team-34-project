@@ -9,9 +9,7 @@
 | Ethan Manivannan    | rm56@illinois.edu           | Backend       |
 | Rishabh Mendiratta  | ethanm7@illinois.edu        | Backend / DB  |
 
-
-
-# Team 34 Project
+# Team 34 Project Description
 
 A full-stack web application with Next.js frontend and Flask backend.
 
@@ -141,5 +139,4 @@ python run.py
 # Terminal 2 - Frontend:
 cd frontend
 npm run dev
-```
 
