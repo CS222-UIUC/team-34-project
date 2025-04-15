@@ -49,56 +49,73 @@ export default function Forum() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-lg text-gray-700">
+        Loading...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="min-h-screen flex items-center justify-center text-red-600">{error}</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-600 text-lg">
+        {error}
+      </div>
+    );
   }
 
   return (
-    <main className="min-h-screen p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Forum Posts</h1>
-          <div className="flex items-center gap-4">
+    <main className="min-h-screen bg-gradient-to-br from-white to-blue-50 p-6">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-10">
+          <div className="text-center sm:text-left">
+            <h1 className="text-4xl font-bold text-gray-900">Community Forum</h1>
+            <p className="text-gray-500 mt-1">Explore and join discussions</p>
+          </div>
+          <div className="mt-4 sm:mt-0 flex gap-3">
             <button
               onClick={() => router.push('/forum/new')}
-              className="btn-primary"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition"
             >
-              Create New Post
+              + New Post
             </button>
             <button
               onClick={handleLogout}
-              className="btn-secondary"
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg border transition"
             >
               Logout
             </button>
           </div>
         </div>
 
-        <div className="space-y-4">
-          {posts.map((post) => (
-            <div
-              key={post.id}
-              className="card cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => router.push(`/forum/${post.id}`)}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900">{post.title}</h2>
-                  <p className="text-gray-600 mt-2">{post.content.substring(0, 200)}...</p>
-                  <div className="mt-4 flex justify-between text-sm text-gray-500">
-                    <span>By {post.username}</span>
-                    <span>{new Date(post.created_at).toLocaleDateString()}</span>
-                  </div>
+        {/* Posts */}
+        <div className="grid gap-6">
+          {posts.map((post) => {
+            const category = categories.find(c => c.id === post.category_id)?.name || 'General';
+
+            return (
+              <div
+                key={post.id}
+                onClick={() => router.push(`/forum/${post.id}`)}
+                className="bg-white p-6 rounded-xl shadow hover:shadow-md transition cursor-pointer border border-gray-100"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <h2 className="text-xl font-semibold text-gray-800">{post.title}</h2>
+                  <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full font-medium">
+                    {category}
+                  </span>
                 </div>
-                <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-                  {categories.find(c => c.id === post.category_id)?.name}
-                </span>
+                <p className="text-gray-600 mt-1 mb-4 text-sm">
+                  {post.content.length > 200 ? post.content.substring(0, 200) + '...' : post.content}
+                </p>
+                <div className="flex justify-between text-sm text-gray-400">
+                  <span>By {post.username}</span>
+                  <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </main>
