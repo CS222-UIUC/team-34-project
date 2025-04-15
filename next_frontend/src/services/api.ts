@@ -15,7 +15,8 @@ export interface Reply {
 }
 
 export const api = {
-  async register(username: string, password: string) {
+  // Auth
+  register: async (username: string, password: string) => {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: {
@@ -25,15 +26,16 @@ export const api = {
       credentials: 'include',
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Registration failed');
+      throw new Error(data.error || 'Registration failed');
     }
 
-    return response.json();
+    return data;
   },
 
-  async login(username: string, password: string) {
+  login: async (username: string, password: string) => {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: {
@@ -51,7 +53,7 @@ export const api = {
     return response.json();
   },
 
-  async logout() {
+  logout: async () => {
     const response = await fetch(`${API_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
@@ -64,7 +66,7 @@ export const api = {
     return response.json();
   },
 
-  async getCurrentUser() {
+  getCurrentUser: async () => {
     const response = await fetch(`${API_URL}/auth/user`, {
       credentials: 'include',
     });
@@ -76,7 +78,8 @@ export const api = {
     return response.json();
   },
 
-  async getPosts(): Promise<Post[]> {
+  // Posts
+  getPosts: async (): Promise<Post[]> => {
     const response = await fetch(`${API_URL}/posts`, {
       credentials: 'include',
     });
@@ -98,7 +101,29 @@ export const api = {
     }));
   },
 
-  async createPost(data: CreatePostData): Promise<Post> {
+  getPost: async (postId: string): Promise<Post> => {
+    const response = await fetch(`${API_URL}/posts/${postId}`, {
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch post');
+    }
+
+    const post = await response.json();
+    return {
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      created_at: post.created_at || post.timestamp,
+      category_id: post.category_id || post.category?.id,
+      user_id: post.user_id || post.author?.id,
+      username: post.username || post.author?.username,
+      replies: post.replies || []
+    };
+  },
+
+  createPost: async (data: CreatePostData): Promise<Post> => {
     const response = await fetch(`${API_URL}/posts`, {
       method: 'POST',
       headers: {
@@ -125,7 +150,26 @@ export const api = {
     };
   },
 
-  async getCategories(): Promise<Category[]> {
+  // Replies
+  createReply: async (postId: string, data: { content: string }): Promise<Reply> => {
+    const response = await fetch(`${API_URL}/posts/${postId}/replies`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create reply');
+    }
+
+    return response.json();
+  },
+
+  // Categories
+  getCategories: async (): Promise<Category[]> => {
     const response = await fetch(`${API_URL}/categories`, {
       credentials: 'include',
     });
@@ -137,3 +181,5 @@ export const api = {
     return response.json();
   }
 };
+
+export default api;

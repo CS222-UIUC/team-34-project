@@ -65,6 +65,9 @@ def create_reply(post_id):
 
     reply = Reply(content=data["content"],
                   user_id=current_user.id, post_id=post.id)
+    reply = Reply(
+        content=data["content"], user_id=current_user.id, post_id=post.id
+    )
 
     db.session.add(reply)
     db.session.commit()

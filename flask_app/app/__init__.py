@@ -24,12 +24,6 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        from .models import User
-
-        return User.query.get(int(user_id))
-
     # Create database tables
     with app.app_context():
         db.create_all()
