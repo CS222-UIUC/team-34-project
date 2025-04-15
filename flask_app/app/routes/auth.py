@@ -31,11 +31,11 @@ def login():
     data = request.get_json()
 
     if not data or "username" not in data or "password" not in data:
-        return jsonify({"error": "Missing required fields"}), 400
+        return jsonify({"error": "Missing username or password"}), 400
 
     user = User.query.filter_by(username=data["username"]).first()
     if not user or not user.check_password(data["password"]):
-        return jsonify({"error": "Invalid credentials"}), 401
+        return jsonify({"error": "Invalid username or password"}), 401
 
     login_user(user)
     return jsonify(user.to_dict())
