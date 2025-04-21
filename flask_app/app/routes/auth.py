@@ -2,8 +2,6 @@ from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user, login_user, logout_user
 from app.models import User
 from app import db
-import secrets
-from flask_mail import Message
 
 auth = Blueprint("auth", __name__)
 
