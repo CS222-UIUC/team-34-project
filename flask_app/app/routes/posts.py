@@ -63,7 +63,6 @@ def create_reply(post_id):
     if not data or "content" not in data:
         return jsonify({"error": "Missing content"}), 400
 
-
     reply = Reply(
         content=data["content"],
         user_id=current_user.id,
