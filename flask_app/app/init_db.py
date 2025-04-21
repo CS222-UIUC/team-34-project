@@ -31,18 +31,14 @@ def init_db():
         posts = [
             Post(
                 title="Welcome to the Forum",
-                content=(
-                    "This is our first post. "
-                    "Feel free to introduce yourself!"
-                ),
+                content=("This is our first post. " "Feel free to introduce yourself!"),
                 user_id=user.id,
                 category_id=categories[0].id,
             ),
             Post(
                 title="How to Use the Forum",
                 content=(
-                    "Here are some guidelines for "
-                    "using the forum effectively..."
+                    "Here are some guidelines for " "using the forum effectively..."
                 ),
                 user_id=user.id,
                 category_id=categories[0].id,

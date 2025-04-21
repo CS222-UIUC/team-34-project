@@ -101,24 +101,32 @@ def test_create_post(auth_client, category):
     data = response.get_json()
     assert data["title"] == "Test Post"
     assert data["category"]["id"] == category.id
+
+
 def test_register_user_missing_fields(client):
-    response = client.post("/register", json={
-        "email": "incomplete@example.com"
-        # missing password and username
-    })
+    response = client.post(
+        "/register",
+        json={
+            "email": "incomplete@example.com"
+            # missing password and username
+        },
+    )
     assert response.status_code == 400
+
+
 def test_register_duplicate_email(client, monkeypatch):
     monkeypatch.setattr("config.send_email", dummy_send_email)
 
     user_data = {
         "email": "dupe@example.com",
         "password": "password123",
-        "username": "dupeuser"
+        "username": "dupeuser",
     }
 
     client.post("/register", json=user_data)
     response = client.post("/register", json=user_data)
-    assert response.status_code == 409  #test
+    assert response.status_code == 409  # test
+
 
 def test_upvote_post(auth_client, post):
     response = auth_client.post(f"/posts/{post.id}/upvote")
@@ -129,6 +137,7 @@ def test_upvote_post(auth_client, post):
     assert data["message"] == "Post upvoted successfully"
     assert "upvote_count" in data
     assert data["upvote_count"] == 1  # Assuming this is the first upvote
+
 
 def test_upvote_reply(auth_client, post, reply):
     response = auth_client.post(f"/posts/{post.id}/replies/{reply.id}/upvote")

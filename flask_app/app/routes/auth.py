@@ -53,4 +53,3 @@ def get_user():
     if not current_user.is_authenticated:
         return jsonify({"error": "Not authenticated"}), 401
     return jsonify(current_user.to_dict())
-
