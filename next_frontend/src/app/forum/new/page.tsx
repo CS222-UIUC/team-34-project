@@ -22,6 +22,7 @@ export default function NewPost() {
         const data = await api.getCategories();
         setCategories(data);
       } catch (err) {
+        console.log(err);
         setError('Failed to load categories');
       }
     };
@@ -77,12 +78,16 @@ export default function NewPost() {
           >
             ← Back to Forum
           </button>
-          <button
-            onClick={handleLogout}
-            className="btn-secondary"
-          >
-            Logout
-          </button>
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <span className="font-medium">{user.username}</span>
+            <span className="hidden sm:inline">•</span>
+            <button
+              onClick={handleLogout}
+              className="btn-secondary"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Create New Post</h1>
@@ -151,4 +156,4 @@ export default function NewPost() {
       </div>
     </main>
   );
-} 
+}

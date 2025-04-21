@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/services/api';
 import { Post, Category } from '@/types';
+import UsernameLink from '@/components/UsernameLink';
 
 export default function Forum() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -14,12 +16,14 @@ export default function Forum() {
   const [categoryId, setCategoryId] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+  const { user } = useAuth();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         await api.getCurrentUser();
       } catch (err) {
+        console.log(err);
         router.push('/');
       }
     };
@@ -36,6 +40,7 @@ export default function Forum() {
         setPosts(postsData);
         setCategories(categoriesData);
       } catch (err) {
+        console.log(err);
         setError('Failed to load data');
       }
     };
@@ -57,6 +62,7 @@ export default function Forum() {
       setContent('');
       setCategoryId('');
     } catch (err) {
+      console.log(err);
       setError('Failed to create post');
     }
   };
@@ -79,12 +85,20 @@ export default function Forum() {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Forum</h1>
-          <button
-            onClick={handleLogout}
-            className="btn-secondary"
-          >
-            Logout
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => router.push(`/user/${user?.username}`)}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg border transition"
+            >
+              My Account
+            </button>
+            <button
+              onClick={handleLogout}
+              className="btn-secondary"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className="card mb-8">
@@ -180,9 +194,8 @@ export default function Forum() {
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{post.title}</h3>
                   <p className="text-gray-600 mb-4">{post.content}</p>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span>Posted by {post.username}</span>
-                    <span>•</span>
+                  <div className="flex justify-between text-sm text-gray-400">
+                    <span>By <UsernameLink username={post.username} /></span>
                     <span>{new Date(post.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
