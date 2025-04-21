@@ -53,6 +53,12 @@ def create_post():
 
     return jsonify(post.to_dict()), 201
 
+@posts.route("/posts/<int:post_id>/replies", methods=["GET"])
+def get_replies(post_id):
+    post = Post.query.get_or_404(post_id)
+    replies = Reply.query.filter_by(post_id=post.id).all()
+    return jsonify([reply.to_dict() for reply in replies])
+
 
 @posts.route("/posts/<int:post_id>/replies", methods=["POST"])
 @login_required
