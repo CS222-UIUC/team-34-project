@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/services/api';
 import { Post, Category, Reply } from '@/types';
+import UsernameLink from '@/components/UsernameLink';
 
 export default function PostPage({ params }: { params: { postId: string } }) {
   const [post, setPost] = useState<Post | null>(null);
@@ -90,9 +91,17 @@ export default function PostPage({ params }: { params: { postId: string } }) {
           >
             ← Back to Forum
           </button>
-          <button onClick={handleLogout} className="btn-secondary">
-            Logout
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => router.push(`/user/${user?.username}`)}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg border transition"
+            >
+              My Account
+            </button>
+            <button onClick={handleLogout} className="btn-secondary">
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className="card mb-8">
@@ -100,8 +109,8 @@ export default function PostPage({ params }: { params: { postId: string } }) {
             <div className="w-full">
               <h1 className="text-3xl font-bold text-gray-900">{post.title}</h1>
               <p className="text-gray-700 mt-4">{post.content}</p>
-              <div className="mt-6 flex justify-between text-sm text-gray-500">
-                <span className="font-medium text-gray-700">By {post.username}</span>
+              <div className="mt-6 flex justify-between text-sm text-gray-400">
+                <span>By <UsernameLink username={post.username} /></span>
                 <span>{new Date(post.created_at).toLocaleDateString()}</span>
               </div>
             </div>
@@ -120,8 +129,8 @@ export default function PostPage({ params }: { params: { postId: string } }) {
                 className="card hover:shadow-md transition-shadow"
               >
                 <p className="text-gray-700">{reply.content}</p>
-                <div className="mt-2 flex justify-between text-sm text-gray-500">
-                  <span>By {reply.author.username}</span>
+                <div className="mt-2 flex justify-between text-sm text-gray-400">
+                  <span>By <UsernameLink username={reply.author.username} /></span>
                   <span>{new Date(reply.timestamp).toLocaleDateString()}</span>
                 </div>
               </div>
