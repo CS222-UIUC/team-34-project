@@ -98,3 +98,21 @@ def edit_post(post_id):
 
     db.session.commit()
     return jsonify(post.to_dict())
+
+@posts.route("/replies/<int:reply_id>", methods=["PUT"])
+@login_required
+def edit_reply(reply_id):
+    reply = Reply.query.get_or_404(reply_id)
+
+    # Ensure the user is the one who created the reply
+    if reply.user_id != current_user.id:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    data = request.get_json()
+
+    if "content" in data:
+        reply.content = data["content"]
+
+    db.session.commit()
+    return jsonify(reply.to_dict())
+
