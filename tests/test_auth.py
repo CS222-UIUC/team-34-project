@@ -147,4 +147,5 @@ def test_upvote_reply(auth_client, post, reply):
     assert "message" in data
     assert data["message"] == "Reply upvoted successfully"
     assert "upvote_count" in data
-    assert data["upvote_count"] == 1  # Assuming this is the first upvote for the reply
+    assert data["upvote_count"] == 1
+    # Assuming this is the first upvote for the reply

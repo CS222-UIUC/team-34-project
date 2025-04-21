@@ -1,5 +1,3 @@
-from app import db
-from flask_login import UserMixin
 
 '''
 @posts.route("/posts/<int:post_id>/upvote", methods=["POST"])
@@ -20,13 +18,16 @@ def upvote_post(post_id):
 
     return (
         jsonify(
-            {"message": "Post upvoted successfully", "upvote_count": len(post.upvotes)}
+            {"message":
+            "Post upvoted successfully",
+            "upvote_count": len(post.upvotes)}
         ),
         201,
     )
 
 
-@posts.route("/posts/<int:post_id>/replies/<int:reply_id>/upvote", methods=["POST"])
+@posts.route("/posts/<int:post_id>/replies/<int:reply_id>/upvote",
+methods=["POST"])
 @login_required
 def upvote_reply(post_id, reply_id):
     post = Post.query.get_or_404(post_id)
