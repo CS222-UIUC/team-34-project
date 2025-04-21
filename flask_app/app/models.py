@@ -4,7 +4,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.extensions import db
 
 
-class User(UserMixin, db.Model):
+class BaseModel(db.Model):
+    __abstract__ = True
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+
+
+class User(UserMixin, BaseModel):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -41,6 +47,10 @@ class Category(db.Model):
     def __repr__(self):
         return f"<Category {self.name}>"
 
+    def __str__(self) -> str:
+        """String representation of Category."""
+        return self.name
+
 
 class Post(db.Model):
     __tablename__ = "post"
@@ -49,9 +59,6 @@ class Post(db.Model):
     title = db.Column(db.String(140))
     content = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
@@ -72,6 +79,20 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"<Post {self.title}>"
+
+    @property
+    def is_empty(self) -> bool:
+        """Check if post has no content."""
+        return not bool(self.content.strip())
+
+    @property
+    def reply_count(self) -> int:
+        """Get number of replies to this post."""
+        return self.replies.count()
+
+    def __str__(self) -> str:
+        """String representation of Post."""
+        return f"{self.title} by {self.author.username}"
 
 
 class Reply(db.Model):
