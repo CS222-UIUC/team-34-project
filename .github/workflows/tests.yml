@@ -1,9 +1,9 @@
-name: Run Flask Auth Tests
+name: Run Fullstack Tests
 
 on: [push, pull_request]
 
 jobs:
-  test:
+  backend-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,3 +23,28 @@ jobs:
 
       - name: Run tests
         run: pytest
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./next_frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Lint frontend
+        run: npm run lint -- --config ./next_frontend/.eslintrc.json  # Specify the ESLint config path
+        
+      - name: Build frontend
+        run: npm run build
+
