@@ -43,8 +43,8 @@ jobs:
         run: npm ci
 
       - name: Lint frontend
-        run: npm run lint -- --config ./next_frontend/.eslintrc.json  # Specify the ESLint config path
-        
+        run: npm run lint
+
       - name: Build frontend
         run: npm run build
 
