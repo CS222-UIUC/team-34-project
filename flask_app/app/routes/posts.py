@@ -53,12 +53,6 @@ def create_post():
 
     return jsonify(post.to_dict()), 201
 
-@posts.route("/posts/<int:post_id>/replies", methods=["GET"])
-def get_replies(post_id):
-    post = Post.query.get_or_404(post_id)
-    replies = Reply.query.filter_by(post_id=post.id).all()
-    return jsonify([reply.to_dict() for reply in replies])
-
 
 @posts.route("/posts/<int:post_id>/replies", methods=["POST"])
 @login_required
@@ -79,40 +73,4 @@ def create_reply(post_id):
     db.session.commit()
 
     return jsonify(reply.to_dict()), 201
-
-@posts.route("/posts/<int:post_id>", methods=["PUT"])
-@login_required
-def edit_post(post_id):
-    post = Post.query.get_or_404(post_id)
-
-    # Ensure that the user is the one who created the post
-    if post.user_id != current_user.id:
-        return jsonify({"error": "Unauthorized"}), 403
-
-    data = request.get_json()
-
-    if "title" in data:
-        post.title = data["title"]
-    if "content" in data:
-        post.content = data["content"]
-
-    db.session.commit()
-    return jsonify(post.to_dict())
-
-@posts.route("/replies/<int:reply_id>", methods=["PUT"])
-@login_required
-def edit_reply(reply_id):
-    reply = Reply.query.get_or_404(reply_id)
-
-    # Ensure the user is the one who created the reply
-    if reply.user_id != current_user.id:
-        return jsonify({"error": "Unauthorized"}), 403
-
-    data = request.get_json()
-
-    if "content" in data:
-        reply.content = data["content"]
-
-    db.session.commit()
-    return jsonify(reply.to_dict())
 
