@@ -1,5 +1,3 @@
-
-
 def test_dummy_login():
     response = {"status_code": 200, "user": {"email": "dummy@example.com"}}
     assert response["status_code"] == 200
