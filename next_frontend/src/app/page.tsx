@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/services/api';
 import { Post, Category } from '@/types';
+import UsernameLink from '@/components/UsernameLink';
 
 export default function Forum() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -75,6 +76,12 @@ export default function Forum() {
           </div>
           <div className="mt-4 sm:mt-0 flex gap-3">
             <button
+              onClick={() => router.push(`/user/${user?.username}`)}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg border transition"
+            >
+              My Account
+            </button>
+            <button
               onClick={() => router.push('/forum/new')}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition"
             >
@@ -110,7 +117,7 @@ export default function Forum() {
                   {post.content.length > 200 ? post.content.substring(0, 200) + '...' : post.content}
                 </p>
                 <div className="flex justify-between text-sm text-gray-400">
-                  <span>By {post.username}</span>
+                  <span>By <UsernameLink username={post.username} /></span>
                   <span>{new Date(post.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
