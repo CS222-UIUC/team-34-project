@@ -20,6 +20,7 @@ export default function Forum() {
       try {
         await api.getCurrentUser();
       } catch (err) {
+        console.log(err);
         router.push('/');
       }
     };
@@ -36,6 +37,7 @@ export default function Forum() {
         setPosts(postsData);
         setCategories(categoriesData);
       } catch (err) {
+        console.log(err);
         setError('Failed to load data');
       }
     };
@@ -57,6 +59,7 @@ export default function Forum() {
       setContent('');
       setCategoryId('');
     } catch (err) {
+      console.log(err);
       setError('Failed to create post');
     }
   };
