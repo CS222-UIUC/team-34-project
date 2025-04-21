@@ -22,6 +22,7 @@ export default function NewPost() {
         const data = await api.getCategories();
         setCategories(data);
       } catch (err) {
+        console.log(err);
         setError('Failed to load categories');
       }
     };
