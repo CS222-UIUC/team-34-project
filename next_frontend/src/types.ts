@@ -12,6 +12,8 @@ export interface Post {
   user_id: number;
   username: string;
   replies: Reply[];
+  vote_count?: number;
+  user_vote?: number;  // 1 for upvote, -1 for downvote, 0 or undefined if no vote
 }
 
 export interface Reply {
@@ -21,10 +23,16 @@ export interface Reply {
   author: {
     username: string;
   };
+  vote_count?: number;
+  user_vote?: number;  // 1 for upvote, -1 for downvote, 0 or undefined if no vote
 }
 
 export interface CreatePostData {
   title: string;
   content: string;
   category_id: number;
+}
+
+export interface VoteData {
+  value: number;  // 1 for upvote, -1 for downvote, 0 to remove vote
 } 
