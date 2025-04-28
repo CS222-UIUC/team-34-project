@@ -40,7 +40,7 @@ def init_db():
                 title="How to Use the Forum",
                 content=(
                     "Here are some guidelines for "
-                      "using the forum effectively..."
+                    "using the forum effectively..."
                 ),
                 user_id=user.id,
                 category_id=categories[0].id,
