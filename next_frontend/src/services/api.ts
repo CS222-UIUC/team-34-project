@@ -1,17 +1,10 @@
-import { Post, Category, CreatePostData, VoteData } from '@/types';
+import { Post, Category, CreatePostData, VoteData, Reply } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 
 export interface User {
   id: number;
   username: string;
-}
-
-export interface Reply {
-  id: number;
-  content: string;
-  timestamp: string;
-  author: User;
 }
 
 export const api = {
@@ -150,7 +143,9 @@ export const api = {
       category_id: post.category_id || post.category?.id,
       user_id: post.user_id || post.author?.id,
       username: post.username || post.author?.username,
-      replies: post.replies || []
+      replies: post.replies || [],
+      vote_count: post.vote_count || 0,
+      user_vote: post.user_vote || 0
     };
   },
 
@@ -169,7 +164,15 @@ export const api = {
       throw new Error('Failed to create reply');
     }
 
-    return response.json();
+    const reply = await response.json();
+    return {
+      id: reply.id,
+      content: reply.content,
+      timestamp: reply.timestamp,
+      author: reply.author || { username: reply.username || '' },
+      vote_count: reply.vote_count || 0,
+      user_vote: reply.user_vote || 0
+    };
   },
 
   // Votes
@@ -216,7 +219,15 @@ export const api = {
       throw new Error('Failed to vote on reply');
     }
 
-    return response.json();
+    const reply = await response.json();
+    return {
+      id: reply.id,
+      content: reply.content,
+      timestamp: reply.timestamp,
+      author: reply.author || { username: reply.username || '' },
+      vote_count: reply.vote_count || 0,
+      user_vote: reply.user_vote || 0
+    };
   },
 
   // Categories

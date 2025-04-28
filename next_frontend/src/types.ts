@@ -22,9 +22,12 @@ export interface Reply {
   timestamp: string;
   author: {
     username: string;
+    id?: number;
   };
   vote_count?: number;
   user_vote?: number;  // 1 for upvote, -1 for downvote, 0 or undefined if no vote
+  user_id?: number;
+  post_id?: number;
 }
 
 export interface CreatePostData {
