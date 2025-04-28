@@ -1,4 +1,4 @@
-import { Post, Category, CreatePostData } from '@/types';
+import { Post, Category, CreatePostData, VoteData } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 
@@ -97,7 +97,9 @@ export const api = {
       category_id: post.category_id || post.category?.id,
       user_id: post.user_id || post.author?.id,
       username: post.username || post.author?.username,
-      replies: post.replies || []
+      replies: post.replies || [],
+      vote_count: post.vote_count || 0,
+      user_vote: post.user_vote || 0
     }));
   },
 
@@ -119,7 +121,9 @@ export const api = {
       category_id: post.category_id || post.category?.id,
       user_id: post.user_id || post.author?.id,
       username: post.username || post.author?.username,
-      replies: post.replies || []
+      replies: post.replies || [],
+      vote_count: post.vote_count || 0,
+      user_vote: post.user_vote || 0
     };
   },
 
@@ -163,6 +167,53 @@ export const api = {
 
     if (!response.ok) {
       throw new Error('Failed to create reply');
+    }
+
+    return response.json();
+  },
+
+  // Votes
+  votePost: async (postId: number, data: VoteData): Promise<Post> => {
+    const response = await fetch(`${API_URL}/posts/${postId}/vote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to vote on post');
+    }
+
+    const post = await response.json();
+    return {
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      created_at: post.created_at || post.timestamp,
+      category_id: post.category_id || post.category?.id,
+      user_id: post.user_id || post.author?.id,
+      username: post.username || post.author?.username,
+      replies: post.replies || [],
+      vote_count: post.vote_count || 0,
+      user_vote: post.user_vote || 0
+    };
+  },
+
+  voteReply: async (replyId: number, data: VoteData): Promise<Reply> => {
+    const response = await fetch(`${API_URL}/replies/${replyId}/vote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to vote on reply');
     }
 
     return response.json();

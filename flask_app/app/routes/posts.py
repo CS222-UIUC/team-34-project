@@ -66,8 +66,11 @@ def create_reply(post_id):
     if not data or "content" not in data:
         return jsonify({"error": "Missing content"}), 400
 
-    reply = Reply(content=data["content"],
-                  user_id=current_user.id, post_id=post.id)
+    reply = Reply(
+        content=data["content"],
+        user_id=current_user.id,
+        post_id=post.id
+    )
 
     db.session.add(reply)
     db.session.commit()
@@ -80,27 +83,20 @@ def create_reply(post_id):
 def vote_post(post_id):
     post = Post.query.get_or_404(post_id)
     data = request.get_json()
-
+    
     if not data or "value" not in data:
         return jsonify({"error": "Missing vote value"}), 400
-
+    
     value = data["value"]
     if value not in [1, -1, 0]:
-        return (
-            jsonify(
-                {
-                    "error": "Invalid vote value."
-                    " Must be 1 (upvote), -1 (downvote), or 0 (remove vote)"
-                }
-            ),
-            400,
-        )
-
+        return jsonify({"error": "Invalid vote value. Must be 1 (upvote), -1 (downvote), or 0 (remove vote)"}), 400
+    
     # Check if user already voted
     existing_vote = PostVote.query.filter_by(
-        user_id=current_user.id, post_id=post_id
+        user_id=current_user.id,
+        post_id=post_id
     ).first()
-
+    
     if value == 0 and existing_vote:
         # Remove vote
         db.session.delete(existing_vote)
@@ -109,11 +105,15 @@ def vote_post(post_id):
         existing_vote.value = value
     elif value != 0:
         # Create new vote
-        vote = PostVote(user_id=current_user.id, post_id=post_id, value=value)
+        vote = PostVote(
+            user_id=current_user.id,
+            post_id=post_id,
+            value=value
+        )
         db.session.add(vote)
-
+    
     db.session.commit()
-
+    
     result = post.to_dict()
     result["user_vote"] = post.get_user_vote(current_user.id)
     return jsonify(result)
@@ -124,27 +124,20 @@ def vote_post(post_id):
 def vote_reply(reply_id):
     reply = Reply.query.get_or_404(reply_id)
     data = request.get_json()
-
+    
     if not data or "value" not in data:
         return jsonify({"error": "Missing vote value"}), 400
-
+    
     value = data["value"]
     if value not in [1, -1, 0]:
-        return (
-            jsonify(
-                {
-                    "error": "Invalid vote value."
-                    " Must be 1 (upvote), -1 (downvote), or 0 (remove vote)"
-                }
-            ),
-            400,
-        )
-
+        return jsonify({"error": "Invalid vote value. Must be 1 (upvote), -1 (downvote), or 0 (remove vote)"}), 400
+    
     # Check if user already voted
     existing_vote = ReplyVote.query.filter_by(
-        user_id=current_user.id, reply_id=reply_id
+        user_id=current_user.id,
+        reply_id=reply_id
     ).first()
-
+    
     if value == 0 and existing_vote:
         # Remove vote
         db.session.delete(existing_vote)
@@ -153,12 +146,15 @@ def vote_reply(reply_id):
         existing_vote.value = value
     elif value != 0:
         # Create new vote
-        vote = ReplyVote(user_id=current_user.id,
-                         reply_id=reply_id, value=value)
+        vote = ReplyVote(
+            user_id=current_user.id,
+            reply_id=reply_id,
+            value=value
+        )
         db.session.add(vote)
-
+    
     db.session.commit()
-
+    
     result = reply.to_dict()
     result["user_vote"] = reply.get_user_vote(current_user.id)
     return jsonify(result)

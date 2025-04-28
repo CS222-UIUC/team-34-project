@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/services/api';
 import { Post, Category } from '@/types';
 import UsernameLink from '@/components/UsernameLink';
+import VoteButtons from '@/components/VoteButtons';
 
 export default function Forum() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -188,20 +189,46 @@ export default function Forum() {
         </div>
 
         <div className="space-y-4">
-          {filteredPosts.map(post => (
-            <div key={post.id} className="card">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{post.title}</h3>
-                  <p className="text-gray-600 mb-4">{post.content}</p>
-                  <div className="flex justify-between text-sm text-gray-400">
-                    <span>By <UsernameLink username={post.username} /></span>
-                    <span>{new Date(post.created_at).toLocaleDateString()}</span>
+          {filteredPosts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+            >
+              <div className="flex">
+                <div className="mr-4">
+                  <VoteButtons 
+                    voteCount={post.vote_count || 0} 
+                    userVote={post.user_vote || 0} 
+                    onVote={async (value) => {
+                      try {
+                        const updatedPost = await api.votePost(post.id, { value });
+                        setPosts(
+                          posts.map(p => 
+                            p.id === post.id 
+                              ? { ...p, vote_count: updatedPost.vote_count, user_vote: updatedPost.user_vote }
+                              : p
+                          )
+                        );
+                      } catch (error) {
+                        console.error('Failed to vote on post:', error);
+                      }
+                    }}
+                    vertical={true}
+                  />
+                </div>
+                <div className="flex-1">
+                  <div
+                    onClick={() => router.push(`/forum/${post.id}`)}
+                    className="cursor-pointer"
+                  >
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{post.title}</h3>
+                    <p className="text-gray-600 mb-4">{post.content}</p>
+                    <div className="flex justify-between text-sm text-gray-400">
+                      <span>By <UsernameLink username={post.username} /></span>
+                      <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
                 </div>
-                <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
-                  {categories.find(c => c.id === post.category_id)?.name}
-                </span>
               </div>
             </div>
           ))}
