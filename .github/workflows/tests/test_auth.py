@@ -5,8 +5,10 @@ def test_dummy_login():
 
 
 def test_dummy_forgot_password():
-    response = {"status_code": 200, "message":
-                "Dummy forgot password test passed"}
+    response = {
+        "status_code": 200,
+        "message": "Dummy forgot password test passed"
+    }
     assert response["status_code"] == 200
     assert "message" in response
 
@@ -67,4 +69,3 @@ def test_forgot_password(client, monkeypatch):
     })
     assert response.status_code == 200
     """
-
