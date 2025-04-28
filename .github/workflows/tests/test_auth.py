@@ -11,7 +11,7 @@ def test_dummy_forgot_password():
     assert "message" in response
 
 
-'''
+"""
 import pytest
 from app import create_app, db
 from models import User
@@ -66,4 +66,5 @@ def test_forgot_password(client, monkeypatch):
         "url": "http://localhost:3000"
     })
     assert response.status_code == 200
-    '''
+    """
+
