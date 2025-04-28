@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/services/api';
 import { Post, Category, Reply } from '@/types';
 import UsernameLink from '@/components/UsernameLink';
+import VoteButtons from '@/components/VoteButtons';
 
 export default function PostPage({ params }: { params: { postId: string } }) {
   const [post, setPost] = useState<Post | null>(null);
@@ -108,10 +109,33 @@ export default function PostPage({ params }: { params: { postId: string } }) {
           <div className="flex justify-between items-start">
             <div className="w-full">
               <h1 className="text-3xl font-bold text-gray-900">{post.title}</h1>
-              <p className="text-gray-700 mt-4">{post.content}</p>
-              <div className="mt-6 flex justify-between text-sm text-gray-400">
-                <span>By <UsernameLink username={post.username} /></span>
-                <span>{new Date(post.created_at).toLocaleDateString()}</span>
+              <div className="flex mt-3">
+                <div className="mr-4">
+                  <VoteButtons 
+                    voteCount={post.vote_count || 0} 
+                    userVote={post.user_vote || 0} 
+                    onVote={async (value) => {
+                      try {
+                        const updatedPost = await api.votePost(post.id, { value });
+                        setPost({
+                          ...post,
+                          vote_count: updatedPost.vote_count,
+                          user_vote: updatedPost.user_vote
+                        });
+                      } catch (error) {
+                        console.error('Failed to vote on post:', error);
+                      }
+                    }}
+                    vertical={true}
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="text-gray-700 mt-4">{post.content}</p>
+                  <div className="mt-6 flex justify-between text-sm text-gray-400">
+                    <span>By <UsernameLink username={post.username} /></span>
+                    <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
               </div>
             </div>
             <span className="ml-4 px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium whitespace-nowrap">
@@ -126,12 +150,37 @@ export default function PostPage({ params }: { params: { postId: string } }) {
             {post.replies?.map((reply: Reply) => (
               <div
                 key={reply.id}
-                className="card hover:shadow-md transition-shadow"
+                className="p-4 border rounded-md shadow-sm"
               >
-                <p className="text-gray-700">{reply.content}</p>
-                <div className="mt-2 flex justify-between text-sm text-gray-400">
-                  <span>By <UsernameLink username={reply.author.username} /></span>
-                  <span>{new Date(reply.timestamp).toLocaleDateString()}</span>
+                <div className="flex">
+                  <div className="mr-3">
+                    <VoteButtons 
+                      voteCount={reply.vote_count || 0} 
+                      userVote={reply.user_vote || 0} 
+                      onVote={async (value) => {
+                        try {
+                          const updatedReply = await api.voteReply(reply.id, { value });
+                          setPost({
+                            ...post,
+                            replies: post.replies.map(r => 
+                              r.id === reply.id 
+                                ? { ...r, vote_count: updatedReply.vote_count, user_vote: updatedReply.user_vote }
+                                : r
+                            )
+                          });
+                        } catch (error) {
+                          console.error('Failed to vote on reply:', error);
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-gray-700">{reply.content}</p>
+                    <div className="mt-2 flex justify-between text-sm text-gray-400">
+                      <span>By <UsernameLink username={reply.author.username} /></span>
+                      <span>{new Date(reply.timestamp).toLocaleDateString()}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
