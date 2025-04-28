@@ -1,5 +1,10 @@
 
-'''
+from flask import jsonify
+from flask_login import login_required, current_user
+from your_app import db  # Replace 'your_app' with the actual name of your app
+from your_app.models import Post, Reply, Upvote  # Adjust based on where your models are located
+
+
 @posts.route("/posts/<int:post_id>/upvote", methods=["POST"])
 @login_required
 def upvote_post(post_id):
@@ -55,4 +60,4 @@ def upvote_reply(post_id, reply_id):
         ),
         201,
     )
-'''
+
