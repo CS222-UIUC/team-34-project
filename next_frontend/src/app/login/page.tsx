@@ -31,30 +31,29 @@ export default function Login() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-white p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 transition-all duration-300">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Welcome to Forum</h1>
-          <p className="text-gray-600">Join our community and start discussing</p>
+        <div className="text-center mb-6">
+          <div className="text-4xl animate-bounce mb-3">🏈</div>
+          <h1 className="text-4xl font-extrabold text-blue-800 mb-1">Sports Forum Login</h1>
+          <p className="text-gray-600 text-sm">Join the conversation. Draft your takes.</p>
         </div>
 
         <div className="flex justify-center mb-6">
-          <div className="bg-gray-100 rounded-full p-1 flex gap-1">
+          <div className="bg-blue-100 rounded-full p-1 flex gap-1">
             <button
               onClick={() => setIsLogin(true)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-300 ${
-                isLogin
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${isLogin
                   ? 'bg-blue-600 text-white shadow'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+                  : 'text-blue-600 hover:text-blue-800'
+                }`}
             >
               Login
             </button>
             <button
               onClick={() => setIsLogin(false)}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-300 ${
-                !isLogin
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${!isLogin
                   ? 'bg-blue-600 text-white shadow'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
+                  : 'text-blue-600 hover:text-blue-800'
+                }`}
             >
               Register
             </button>
