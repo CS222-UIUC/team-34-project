@@ -138,3 +138,105 @@ def test_upvote_reply(auth_client, post, reply):
     assert "upvote_count" in data
     assert data["upvote_count"] == 1
     # Assuming this is the first upvote for the reply
+
+
+def test_get_posts(client, category, post):
+    """
+    Test retrieving all posts, optionally filtered by category.
+    """
+    response = client.get("/posts")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert isinstance(data, list)
+    assert len(data) > 0
+    assert "title" in data[0]
+    assert "content" in data[0]
+
+    # Test filtering by category
+    response = client.get(f"/posts?category_id={category.id}")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert all(post["category"]["id"] == category.id for post in data)
+
+
+def test_get_post(client, post):
+    """
+    Test retrieving a single post by ID.
+    """
+    response = client.get(f"/posts/{post.id}")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["id"] == post.id
+    assert data["title"] == post.title
+    assert data["content"] == post.content
+
+
+def test_create_post_missing_fields(auth_client):
+    """
+    Test creating a post with missing required fields.
+    """
+    response = auth_client.post(
+        "/posts",
+        json={"title": "Incomplete Post"}  # Missing content and category_id
+    )
+    assert response.status_code == 400
+    data = response.get_json()
+    assert "error" in data
+    assert data["error"] == "Missing required fields"
+
+
+def test_create_reply(auth_client, post):
+    """
+    Test creating a reply for a specific post.
+    """
+    response = auth_client.post(
+        f"/posts/{post.id}/replies",
+        json={"content": "This is a test reply."}
+    )
+    assert response.status_code == 201
+    data = response.get_json()
+    assert "content" in data
+    assert data["content"] == "This is a test reply."
+
+
+def test_create_reply_missing_content(auth_client, post):
+    """
+    Test creating a reply with missing content.
+    """
+    response = auth_client.post(f"/posts/{post.id}/replies", json={})
+    assert response.status_code == 400
+    data = response.get_json()
+    assert "error" in data
+    assert data["error"] == "Missing reply content"
+
+
+def test_vote_post(auth_client, post):
+    """
+    Test upvoting a post.
+    """
+    response = auth_client.post(
+        f"/posts/{post.id}/vote",
+        json={"value": 1}  # Upvote
+    )
+    assert response.status_code == 200
+    data = response.get_json()
+    assert "user_vote" in data
+    assert data["user_vote"] == 1
+
+
+def test_remove_vote_post(auth_client, post):
+    """
+    Test removing a vote from a post.
+    """
+    # First, upvote the post
+    auth_client.post(f"/posts/{post.id}/vote", json={"value": 1})
+
+    # Then, remove the vote
+    response = auth_client.post(
+        f"/posts/{post.id}/vote",
+        json={"value": 0}  # Remove vote
+    )
+    assert response.status_code == 200
+    data = response.get_json()
+    assert "user_vote" in data
+    assert data["user_vote"] == 0
