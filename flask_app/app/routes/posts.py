@@ -168,3 +168,82 @@ def vote_reply(reply_id):
     result = reply.to_dict()
     result["user_vote"] = reply.get_user_vote(current_user.id)
     return jsonify(result)
+
+
+'''
+
+def get_posts_by_user(user_id):
+    """
+    Fetch all posts created by a specific user.
+    """
+    return Post.query.filter_by(user_id=user_id).order_by(Post.timestamp
+
+
+def delete_post(post_id):
+    """
+    Delete a post by its ID.
+    """
+    post = Post.query.get(post_id)
+    if post:
+        db.session.delete(post)
+        db.session.commit()
+        return True
+    return False
+
+
+def update_post_content(post_id, new_content):
+    """
+    Update the content of a post.
+    """
+    post = Post.query.get(post_id)
+    if post:
+        post.content = new_content
+        db.session.commit()
+        return post
+    return None
+
+
+def get_all_categories():
+    """
+    Fetch all available categories.
+    """
+    return Category.query.all()
+
+
+def count_post_votes(post_id):
+    """
+    Count the total upvotes and downvotes for a post.
+    """
+    upvotes = PostVote.query.filter_by(post_id=post_id, value=1).count()
+    downvotes = PostVote.query.filter_by(post_id=post_id, value=-1).count()
+    return {"upvotes": upvotes, "downvotes": downvotes}
+
+
+def count_replies(post_id):
+    """
+    Count the total number of replies for a post.
+    """
+    return Reply.query.filter_by(post_id=post_id).count()
+
+
+def has_user_voted_on_post(user_id, post_id):
+    """
+    Check if a user has already voted on a specific post.
+    """
+    return PostVote.query.filter_by(user_id=user_id
+
+
+def get_recent_posts(limit=10):
+    """
+    Fetch the most recent posts, limited by the specified number.
+    """
+    return Post.query.order_by(Post.timestamp.desc()).limit(limit).all()
+
+
+def get_replies_for_post(post_id):
+    """
+    Fetch all replies for a specific post.
+    """
+    return Reply.query.filter_by(post_id=post_id)
+
+'''
