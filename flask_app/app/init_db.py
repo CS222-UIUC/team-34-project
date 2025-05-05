@@ -11,27 +11,41 @@ def init_db():
         # Create all tables
         db.create_all()
 
-        # Create test users
-        user1 = User(username="testuser")
-        user1.set_password("password123")
-        db.session.add(user1)
-
-        user2 = User(username="testuser2")
-        user2.set_password("password123")
-        db.session.add(user2)
-
-        user3 = User(username="testuser3")
-        user3.set_password("password123")
-        db.session.add(user3)
-
-        # Create categories
-        categories = [
-            Category(name="General Discussion"),
-            Category(name="Technical Support"),
-            Category(name="Feature Requests"),
+        # Create test users with more descriptive usernames
+        test_users = [
+            {"username": "SportsFanatic", "password": "password123"},
+            {"username": "TeamCaptain", "password": "password123"},
+            {"username": "StatsGuru", "password": "password123"},
         ]
-        for category in categories:
+
+        users = []
+        for user_data in test_users:
+            user = User(username=user_data["username"])
+            user.set_password(user_data["password"])
+            db.session.add(user)
+            users.append(user)
+
+        # Create categories with descriptions
+        category_data = [
+            {
+                "name": "Match Discussions",
+                "description": "Live and post-match discussions"
+            },
+            {
+                "name": "Analysis & Stats",
+                "description": "Deep dives into sports statistics"
+            },
+            {
+                "name": "Breaking News",
+                "description": "Latest sports updates and transfers"
+            },
+        ]
+
+        categories = []
+        for cat in category_data:
+            category = Category(name=cat["name"])
             db.session.add(category)
+            categories.append(category)
 
         db.session.commit()
 
@@ -43,7 +57,7 @@ def init_db():
                     "This is our first post. "
                     "Feel free to introduce yourself!"
                 ),
-                user_id=user1.id,
+                user_id=users[0].id,
                 category_id=categories[0].id,
             ),
             Post(
@@ -52,7 +66,7 @@ def init_db():
                     "Here are some guidelines for "
                     "using the forum effectively..."
                 ),
-                user_id=user1.id,
+                user_id=users[0].id,
                 category_id=categories[0].id,
             ),
         ]
@@ -65,12 +79,12 @@ def init_db():
         replies = [
             Reply(
                 content="Thanks for the welcome!",
-                user_id=user2.id,
+                user_id=users[1].id,
                 post_id=posts[0].id,
             ),
             Reply(
                 content="These guidelines are very helpful.",
-                user_id=user3.id,
+                user_id=users[2].id,
                 post_id=posts[1].id,
             ),
         ]
@@ -82,22 +96,22 @@ def init_db():
         # Create sample votes
         post_votes = [
             # Upvotes for first post
-            PostVote(user_id=user2.id, post_id=posts[0].id, value=1),
-            PostVote(user_id=user3.id, post_id=posts[0].id, value=1),
+            PostVote(user_id=users[1].id, post_id=posts[0].id, value=1),
+            PostVote(user_id=users[2].id, post_id=posts[0].id, value=1),
             # Mixed votes for second post
-            PostVote(user_id=user2.id, post_id=posts[1].id, value=1),
-            PostVote(user_id=user3.id, post_id=posts[1].id, value=-1),
+            PostVote(user_id=users[1].id, post_id=posts[1].id, value=1),
+            PostVote(user_id=users[2].id, post_id=posts[1].id, value=-1),
         ]
         for vote in post_votes:
             db.session.add(vote)
 
         reply_votes = [
             # Upvotes for first reply
-            ReplyVote(user_id=user1.id, reply_id=replies[0].id, value=1),
-            ReplyVote(user_id=user3.id, reply_id=replies[0].id, value=1),
+            ReplyVote(user_id=users[0].id, reply_id=replies[0].id, value=1),
+            ReplyVote(user_id=users[2].id, reply_id=replies[0].id, value=1),
             # Mixed votes for second reply
-            ReplyVote(user_id=user1.id, reply_id=replies[1].id, value=1),
-            ReplyVote(user_id=user2.id, reply_id=replies[1].id, value=-1),
+            ReplyVote(user_id=users[0].id, reply_id=replies[1].id, value=1),
+            ReplyVote(user_id=users[1].id, reply_id=replies[1].id, value=-1),
         ]
         for vote in reply_votes:
             db.session.add(vote)

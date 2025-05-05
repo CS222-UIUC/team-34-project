@@ -6,16 +6,21 @@ from .extensions import db, login_manager
 def create_app():
     app = Flask(__name__)
 
-    # Configure CORS
-    CORS(
-        app,
-        resources={
-            r"/api/*": {
-                "origins": "http://localhost:3000",
-                "supports_credentials": True,
-            }
-        },
-    )
+    # Configure CORS with more detailed settings
+    cors_config = {
+        "origins": ["http://localhost:3000"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True,
+        "max_age": 3600
+    }
+
+    CORS(app, resources={r"/api/*": cors_config})
+
+    # Add health check endpoint
+    @app.route('/health')
+    def health_check():
+        return {"status": "healthy", "version": "1.0.0"}
 
     # Load configuration
     app.config.from_object("config.Config")
