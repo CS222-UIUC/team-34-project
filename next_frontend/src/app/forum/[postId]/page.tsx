@@ -14,10 +14,20 @@ export default function PostPage({ params }: { params: { postId: string } }) {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const { user, logout } = useAuth();
 
+  // Set isClient state on component mount
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    // Only run this effect on the client side
+    if (!isClient) return;
+    
+    // Check for user authentication
     if (!user) {
       router.push('/login');
       return;
@@ -40,7 +50,7 @@ export default function PostPage({ params }: { params: { postId: string } }) {
     };
 
     fetchData();
-  }, [params.postId, user, router]);
+  }, [params.postId, user, router, isClient]);
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,9 +76,18 @@ export default function PostPage({ params }: { params: { postId: string } }) {
     }
   };
 
+  // Don't render anything during SSR or while checking auth
+  if (!isClient || (!user && isClient)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-lg text-gray-700">
+        Loading...
+      </div>
+    );
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center text-lg text-gray-700">
         Loading...
       </div>
     );
@@ -76,21 +95,26 @@ export default function PostPage({ params }: { params: { postId: string } }) {
 
   if (error || !post) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-600">
+      <div className="min-h-screen flex items-center justify-center text-red-600 text-lg">
         {error || 'Post not found'}
       </div>
     );
   }
 
+  const category = categories.find((c) => c.id === post.category_id)?.name || 'General';
+
   return (
-    <main className="min-h-screen p-4">
+    <main className="min-h-screen p-4 bg-gradient-to-br from-white to-blue-50">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <button
             onClick={() => router.push('/')}
-            className="text-blue-600 hover:text-blue-800"
+            className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
           >
-            ← Back to Forum
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Forum
           </button>
           <div className="flex gap-3">
             <button
@@ -105,10 +129,18 @@ export default function PostPage({ params }: { params: { postId: string } }) {
           </div>
         </div>
 
-        <div className="card mb-8">
-          <div className="flex justify-between items-start">
-            <div className="w-full">
-              <h1 className="text-3xl font-bold text-gray-900">{post.title}</h1>
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="flex items-start gap-4">
+            <div className="flex-grow">
+              <div className="flex items-start justify-between mb-4">
+                <h1 className="text-3xl font-bold text-gray-900 pr-3">{post.title}</h1>
+                <div className="flex-shrink-0">
+                  <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
+                    {category}
+                  </span>
+                </div>
+              </div>
+              
               <div className="flex mt-3">
                 <div className="mr-4">
                   <VoteButtons 
@@ -130,27 +162,55 @@ export default function PostPage({ params }: { params: { postId: string } }) {
                   />
                 </div>
                 <div className="flex-1">
-                  <p className="text-gray-700 mt-4">{post.content}</p>
-                  <div className="mt-6 flex justify-between text-sm text-gray-400">
+                  <p className="text-gray-700 whitespace-pre-line">{post.content}</p>
+                  <div className="mt-6 flex justify-between text-sm text-gray-500 border-t pt-4">
                     <span>By <UsernameLink username={post.username} /></span>
-                    <span>{new Date(post.created_at).toLocaleDateString()}</span>
+                    <span>{new Date(post.created_at).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
             </div>
-            <span className="ml-4 px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium whitespace-nowrap">
-              {categories.find((c) => c.id === post.category_id)?.name}
-            </span>
           </div>
         </div>
 
-        <section>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Comments</h2>
-          <div className="space-y-4">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+            {post.replies?.length ? `Comments (${post.replies.length})` : 'No comments yet'}
+          </h2>
+          
+          <form
+            onSubmit={handleSubmitComment}
+            className="mb-8 border-b pb-8"
+          >
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write a comment..."
+              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3"
+              rows={4}
+            />
+            <div className="flex justify-end">
+              <button 
+                type="submit" 
+                className="btn-primary"
+                disabled={!newComment.trim()}
+              >
+                Post Comment
+              </button>
+            </div>
+          </form>
+
+          <div className="space-y-6">
+            {!post.replies?.length && (
+              <p className="text-center text-gray-500 py-4">
+                Be the first to comment on this post!
+              </p>
+            )}
+            
             {post.replies?.map((reply: Reply) => (
               <div
                 key={reply.id}
-                className="p-4 border rounded-md shadow-sm"
+                className="bg-gray-50 p-4 rounded-lg"
               >
                 <div className="flex">
                   <div className="mr-3">
@@ -176,32 +236,16 @@ export default function PostPage({ params }: { params: { postId: string } }) {
                   </div>
                   <div className="flex-1">
                     <p className="text-gray-700">{reply.content}</p>
-                    <div className="mt-2 flex justify-between text-sm text-gray-400">
+                    <div className="mt-3 flex justify-between text-sm text-gray-500 border-t border-gray-100 pt-2">
                       <span>By <UsernameLink username={reply.author.username} /></span>
-                      <span>{new Date(reply.timestamp).toLocaleDateString()}</span>
+                      <span>{new Date(reply.timestamp).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-
-          <form
-            onSubmit={handleSubmitComment}
-            className="mt-8 bg-white p-4 rounded-lg shadow-md space-y-4"
-          >
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Write a comment..."
-              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              rows={4}
-            />
-            <button type="submit" className="btn-primary">
-              Submit Comment
-            </button>
-          </form>
-        </section>
+        </div>
       </div>
     </main>
   );
