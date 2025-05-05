@@ -169,13 +169,14 @@ def vote_reply(reply_id):
     result["user_vote"] = reply.get_user_vote(current_user.id)
     return jsonify(result)
 
+
 '''
 
 def get_posts_by_user(user_id):
     """
     Fetch all posts created by a specific user.
     """
-    return Post.query.filter_by(user_id=user_id).order_by(Post.timestamp.desc()).all()
+    return Post.query.filter_by(user_id=user_id).order_by(Post.timestamp
 
 
 def delete_post(post_id):
@@ -229,7 +230,7 @@ def has_user_voted_on_post(user_id, post_id):
     """
     Check if a user has already voted on a specific post.
     """
-    return PostVote.query.filter_by(user_id=user_id, post_id=post_id).first() is not None
+    return PostVote.query.filter_by(user_id=user_id
 
 
 def get_recent_posts(limit=10):
@@ -243,6 +244,6 @@ def get_replies_for_post(post_id):
     """
     Fetch all replies for a specific post.
     """
-    return Reply.query.filter_by(post_id=post_id).order_by(Reply.timestamp.asc()).all()
+    return Reply.query.filter_by(post_id=post_id)
 
 '''
