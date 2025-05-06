@@ -11,6 +11,7 @@ import VoteButtons from '@/components/VoteButtons';
 export default function Forum() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -50,6 +51,10 @@ export default function Forum() {
     }
   };
 
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-lg text-gray-700">
@@ -65,6 +70,13 @@ export default function Forum() {
       </div>
     );
   }
+
+  const filteredPosts = selectedCategory === 'All'
+    ? posts
+    : posts.filter(post => {
+      const postCategory = categories.find(c => c.id === post.category_id)?.name || 'General';
+      return postCategory === selectedCategory;
+    });
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-white to-blue-50 p-6">
@@ -97,27 +109,48 @@ export default function Forum() {
           </div>
         </div>
 
+        {/* Category Filter */}
+        <div className="mb-6">
+          <select
+            onChange={(e) => handleCategoryChange(e.target.value)}
+            value={selectedCategory}
+            className="bg-white border rounded-lg py-2 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <option value="All">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.name}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Posts */}
         <div className="grid gap-6">
-          {posts.map((post) => {
+          {filteredPosts.map((post) => {
             const category = categories.find(c => c.id === post.category_id)?.name || 'General';
 
             return (
               <div
                 key={post.id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow relative"
               >
+                {/* Category Badge in Top-Right */}
+                <span className="absolute top-3 right-3 inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                  {category}
+                </span>
+
                 <div className="flex">
                   <div className="mr-4">
-                    <VoteButtons 
-                      voteCount={post.vote_count || 0} 
-                      userVote={post.user_vote || 0} 
+                    <VoteButtons
+                      voteCount={post.vote_count || 0}
+                      userVote={post.user_vote || 0}
                       onVote={async (value) => {
                         try {
                           const updatedPost = await api.votePost(post.id, { value });
                           setPosts(
-                            posts.map(p => 
-                              p.id === post.id 
+                            posts.map(p =>
+                              p.id === post.id
                                 ? { ...p, vote_count: updatedPost.vote_count, user_vote: updatedPost.user_vote }
                                 : p
                             )
@@ -134,7 +167,7 @@ export default function Forum() {
                       onClick={() => router.push(`/forum/${post.id}`)}
                       className="cursor-pointer"
                     >
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">{post.title}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-1">{post.title}</h3>
                       <p className="text-gray-600 mb-4">{post.content}</p>
                       <div className="flex justify-between text-sm text-gray-400">
                         <span>By <UsernameLink username={post.username} /></span>
