@@ -13,7 +13,7 @@
 
 A full-stack web application with Next.js frontend and Flask backend. Join our forum to join and discuss in trending sports topics! Create discussions by making a post, and join others in discussion by making comments on their posts. Upvote and downvote posts to promote favorable behavior that you want in your community. 
 
-Our project has two main components: Frontend, Backend / Database. The frontend allows users to interact with the application in a user friendly environment. You can login, create posts, comment, etc. by pressing buttons that link to functions in the backend, and create objects in the database.
+Our project has three main components: Frontend, Backend, and the Database. The frontend allows users to interact with the application in a user friendly environment. You can login, create posts, comment, etc. by pressing buttons that link to functions in the backend, and create / modify objects in the database.
 
 
 ## Prerequisites
@@ -29,7 +29,7 @@ Our project has two main components: Frontend, Backend / Database. The frontend 
 1. Create and activate virtual environment:
 ```bash
 # From the root directory
-cd flask
+cd flask_app
 python3 -m venv venv
 
 # Activate virtual environment
@@ -65,7 +65,7 @@ The backend will run on http://localhost:5000
 1. Install Node.js dependencies:
 ```bash
 # From the root directory
-cd frontend
+cd next_frontend
 npm install
 cd ..
 ```
@@ -73,7 +73,7 @@ cd ..
 2. Run the Next.js development server:
 ```bash
 # From the root directory
-cd frontend
+cd next_frontend
 npm run dev
 ```
 
