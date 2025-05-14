@@ -84,7 +84,7 @@ The frontend will run on http://localhost:3000
 1. Start the backend:
 ```bash
 # From the root directory
-cd flask
+cd flask_app
 source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 python run.py
 ```
@@ -92,7 +92,7 @@ python run.py
 2. In a new terminal, start the frontend:
 ```bash
 # From the root directory
-cd frontend
+cd next_frontend
 npm run dev
 ```
 
@@ -106,12 +106,12 @@ npm run dev
 
 ```
 .
-├── flask/              # Backend Flask application
+├── flask_app/              # Backend Flask application
 │   ├── app/           # Main application code
 │   ├── requirements.txt
 │   ├── run.py
 │   └── venv/         # Python virtual environment
-├── frontend/          # Frontend Next.js application
+├── next_frontend/          # Frontend Next.js application
 │   ├── src/          # Source code
 │   ├── public/       # Static files
 │   └── package.json
@@ -121,7 +121,7 @@ npm run dev
 
 ```bash
 # 1. Set up virtual environment and backend
-cd flask
+cd flask_app
 python3 -m venv venv
 source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
@@ -129,17 +129,17 @@ python -m app.init_db
 python -m app.init_categories
 
 # 2. Install frontend dependencies
-cd ../frontend
+cd ../next_frontend
 npm install
 cd ..
 
 # 3. Start the application (in separate terminals)
 # Terminal 1 - Backend:
-cd flask
+cd flask_app
 source venv/bin/activate
 python run.py
 
 # Terminal 2 - Frontend:
-cd frontend
+cd next_frontend
 npm run dev
 
