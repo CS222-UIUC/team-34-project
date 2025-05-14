@@ -1,4 +1,4 @@
-# Fantasy Football Forum Project
+# Sports Forum Project
 
 ## Team Info:
 
@@ -11,7 +11,10 @@
 
 # Team 34 Project Description
 
-A full-stack web application with Next.js frontend and Flask backend.
+A full-stack web application with Next.js frontend and Flask backend. Join our forum to join and discuss in trending sports topics! Create discussions by making a post, and join others in discussion by making comments on their posts. Upvote and downvote posts to promote favorable behavior that you want in your community. 
+
+Our project has two main components: Frontend, Backend / Database. The frontend allows users to interact with the application in a user friendly environment. You can login, create posts, comment, etc. by pressing buttons that link to functions in the backend, and create objects in the database.
+
 
 ## Prerequisites
 
